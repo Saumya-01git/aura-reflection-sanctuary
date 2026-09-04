@@ -1,4 +1,3 @@
-```markdown
 # 🌙 Aura — AI Reflection Sanctuary & Growth Vault
 
 [![Google Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-Deployed-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
@@ -191,4 +190,3 @@ gcloud run services update aura-sanctuary \
 - **Cohort:** Google Cloud Gen AI Academy APAC Edition — Cohort 3
 - **Challenge:** Cloud Run Build & Deploy Social Challenge ("Personal Gemini Journal" Extension)
 - **Mandatory Hashtag:** `#AccelerateAIwithCloudRun`
-```
