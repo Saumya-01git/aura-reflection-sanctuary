@@ -1,0 +1,6 @@
+{
+  "name": "Aura",
+  "description": "Reflect with culturally rich Gemini personas, turn memories into multimodal Polaroid cards, collaborate in 5-member Squad Rooms, and seal future time capsules in a zero-trust encrypted vault.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

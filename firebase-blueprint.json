@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile in single-user private vault",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "statusBadge": { "type": "string" },
+        "preferredPersona": { "type": "string" },
+        "preferredWallpaper": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid"]
+    },
+    "Reflection": {
+      "title": "Reflection",
+      "description": "Private reflection chat message in user vault",
+      "type": "object",
+      "properties": {
+        "sender": { "type": "string" },
+        "userPrompt": { "type": "string" },
+        "text": { "type": "string" },
+        "couplet": { "type": "string" },
+        "personaId": { "type": "string" },
+        "modelUsed": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sender", "text"]
+    },
+    "Milestone": {
+      "title": "Milestone",
+      "description": "Conquered obstacle or perspective memory in user vault",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 200 },
+        "summary": { "type": "string", "maxLength": 2000 },
+        "conqueredNote": { "type": "string", "maxLength": 2000 },
+        "category": { "type": "string", "enum": ["challenge", "breakthrough", "learning", "gratitude"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "summary"]
+    },
+    "PublicSnippet": {
+      "title": "PublicSnippet",
+      "description": "Isolated public quote card with selective privacy",
+      "type": "object",
+      "properties": {
+        "authorUid": { "type": "string" },
+        "authorName": { "type": "string" },
+        "content": { "type": "string", "maxLength": 1000 },
+        "couplet": { "type": "string", "maxLength": 500 },
+        "personaTitle": { "type": "string" },
+        "theme": { "type": "string", "enum": ["velvet", "gold", "cyber", "obsidian"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorUid", "content"]
+    },
+    "SquadRoom": {
+      "title": "SquadRoom",
+      "description": "Collaborative Squad or Circle room for up to 5 teammates",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomCode": { "type": "string", "maxLength": 16 },
+        "title": { "type": "string", "maxLength": 200 },
+        "creatorUid": { "type": "string" },
+        "creatorName": { "type": "string" },
+        "participantUids": { "type": "array" },
+        "participantNames": { "type": "object" },
+        "participantPhotos": { "type": "object" },
+        "activePersona": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastActive": { "type": "string", "format": "date-time" }
+      },
+      "required": ["roomCode", "creatorUid", "participantUids"]
+    },
+    "PolaroidMoment": {
+      "title": "PolaroidMoment",
+      "description": "Multimodal Photo + Journal Moment in single-user private vault",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "photoDataUrl": { "type": "string" },
+        "caption": { "type": "string", "maxLength": 2000 },
+        "visualAnalysis": { "type": "string", "maxLength": 2000 },
+        "evocativeTitle": { "type": "string", "maxLength": 200 },
+        "emotionalTone": { "type": "string", "maxLength": 100 },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "photoDataUrl"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile document isolated to user"
+    },
+    "/users/{userId}/reflections/{reflectionId}": {
+      "schema": { "$ref": "#/entities/Reflection" },
+      "description": "Private user reflections"
+    },
+    "/users/{userId}/milestones/{milestoneId}": {
+      "schema": { "$ref": "#/entities/Milestone" },
+      "description": "Past memory and milestone logs"
+    },
+    "/users/{userId}/moments/{momentId}": {
+      "schema": { "$ref": "#/entities/PolaroidMoment" },
+      "description": "Private multimodal photo and journal moments"
+    },
+    "/public_snippets/{snippetId}": {
+      "schema": { "$ref": "#/entities/PublicSnippet" },
+      "description": "Publicly shareable quote cards with revocable author access"
+    },
+    "/duo_rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/SquadRoom" },
+      "description": "Collaborative Squad room up to 5 members"
+    }
+  }
+}
