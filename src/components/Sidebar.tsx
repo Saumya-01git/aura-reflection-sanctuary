@@ -16,9 +16,10 @@ import {
   X,
   BookOpen,
   MessageSquare,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Home
 } from 'lucide-react';
-import { PersonaId, UserProfile, JournalSession } from '../types';
+import { PersonaId, UserProfile, JournalSession, WallpaperId } from '../types';
 import { PERSONAS } from '../lib/personas';
 import { groupSessionsByTime } from '../lib/journalStorage';
 import { formatDateSafe } from '../lib/sanitize';
@@ -29,6 +30,7 @@ interface SidebarProps {
   activeTab: NavTabId;
   setActiveTab: (tab: NavTabId) => void;
   persona: PersonaId;
+  wallpaper?: WallpaperId;
   user: UserProfile | null;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -36,6 +38,7 @@ interface SidebarProps {
   activeSessionId?: string | null;
   onNewReflection?: () => void;
   onSelectSession?: (session: JournalSession) => void;
+  onGoHome?: () => void;
 }
 
 interface NavItemConfig {
@@ -106,13 +109,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   setActiveTab,
   persona,
+  wallpaper,
   user: _user,
   isCollapsed = false,
   onToggleCollapse,
   sessions = [],
   activeSessionId,
   onNewReflection,
-  onSelectSession
+  onSelectSession,
+  onGoHome
 }) => {
   const activePersonaConfig = PERSONAS[persona] || PERSONAS.shayari;
   const [searchQuery, setSearchQuery] = useState('');
@@ -154,8 +159,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside 
       id="aura-left-sidebar"
       aria-label="Aura Primary Navigation & Journal Archive"
-      className={`hidden md:flex flex-col justify-between shrink-0 rounded-3xl backdrop-blur-2xl bg-white/[0.08] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.37)] transition-all duration-300 select-none h-full min-h-0 ${
+      className={`hidden md:flex flex-col justify-between shrink-0 rounded-3xl backdrop-blur-2xl transition-all duration-300 select-none h-full min-h-0 overflow-hidden ${
         isCollapsed ? 'w-20 p-2.5' : 'w-72 lg:w-80 p-3.5'
+      } ${
+        wallpaper === 'cosmic_starlight'
+          ? 'bg-[#090912]/50 border border-[rgba(167,139,250,0.25)] shadow-[0_8px_32px_rgba(99,102,241,0.25),0_0_24px_rgba(167,139,250,0.15)]'
+          : 'bg-white/[0.08] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.37)]'
       }`}
     >
       {/* Top Header & New Reflection Action Button */}
@@ -215,6 +224,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation Tabs (Sanctuary, Flashbacks, Squad Room, Time Capsule, Telemetry) */}
         <nav className="space-y-1" aria-label="Main Spaces Navigation">
+          {/* Quick Return to Welcome Screen (1st Screen) */}
+          {onGoHome && (
+            <button
+              id="sidebar-go-home-btn"
+              onClick={onGoHome}
+              title="Return to Welcome Screen (1st Screen)"
+              className={`w-full group flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-indigo-200/90 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-400/30 hover:border-indigo-300/50 transition-all cursor-pointer shadow-sm active:scale-95 mb-1.5 ${
+                isCollapsed ? 'justify-center p-2' : ''
+              }`}
+            >
+              <Home className="w-3.5 h-3.5 text-indigo-300 shrink-0 group-hover:scale-110 transition-transform" />
+              {!isCollapsed && <span>← Welcome Screen (1st Screen)</span>}
+            </button>
+          )}
+
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -273,7 +297,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Middle Section: 2. INTERACTIVE SEARCH & 3. CHRONOLOGICAL DATED ENTRIES */}
       {!isCollapsed ? (
-        <div className="flex-1 flex flex-col min-h-0 pt-3 border-t border-white/10 mt-3">
+        <div className="flex-1 flex flex-col min-h-0 pt-3 border-t border-white/10 mt-3 overflow-hidden">
           {/* Section Header with Total Counter */}
           <div className="flex items-center justify-between px-1 mb-2">
             <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-white/60 font-semibold">
@@ -346,7 +370,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Chronological Dated Entries List (Scrollable Container) */}
           <div 
             id="sidebar-journal-entries-list"
-            className="flex-1 overflow-y-auto no-scrollbar space-y-3.5 pr-0.5"
+            className="flex-1 overflow-y-auto space-y-3.5 pr-1 min-h-0"
           >
             {filteredSessions.length === 0 ? (
               <div className="py-8 px-2 text-center text-white/40 text-xs">
@@ -601,12 +625,25 @@ const JournalEntryCard: React.FC<{
 export const MobileBottomNav: React.FC<{
   activeTab: NavTabId;
   setActiveTab: (tab: NavTabId) => void;
-}> = ({ activeTab, setActiveTab }) => {
+  onGoHome?: () => void;
+}> = ({ activeTab, setActiveTab, onGoHome }) => {
   return (
     <nav 
       aria-label="Mobile Navigation"
       className="md:hidden fixed bottom-3 inset-x-3 z-40 backdrop-blur-2xl bg-black/85 border border-white/20 rounded-2xl p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6)] flex items-center justify-around"
     >
+      {onGoHome && (
+        <button
+          id="mobile-nav-home-btn"
+          onClick={onGoHome}
+          className="flex flex-col items-center gap-1 py-1.5 px-2.5 rounded-xl transition-all cursor-pointer text-indigo-300 hover:text-white"
+          title="Return to Welcome Screen (1st Screen)"
+        >
+          <Home className="w-4 h-4 text-indigo-300" />
+          <span className="text-[10px] tracking-tight">1st Screen</span>
+        </button>
+      )}
+
       {NAV_ITEMS.map((item) => {
         const Icon = item.icon;
         const isActive = activeTab === item.id;

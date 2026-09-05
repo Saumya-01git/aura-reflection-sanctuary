@@ -18,7 +18,7 @@ import {
   Eye,
   CheckCircle2
 } from 'lucide-react';
-import { PersonaId, WallpaperId } from '../types';
+import { PersonaId, WallpaperId, UserProfile } from '../types';
 import { PERSONAS, WALLPAPERS } from '../lib/personas';
 
 interface LandingHeroProps {
@@ -28,6 +28,8 @@ interface LandingHeroProps {
   setPersona: (p: PersonaId) => void;
   wallpaper: WallpaperId;
   setWallpaper: (w: WallpaperId) => void;
+  user?: UserProfile | null;
+  onContinueSanctuary?: () => void;
 }
 
 export const LandingHero: React.FC<LandingHeroProps> = ({
@@ -36,7 +38,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
   currentPersona,
   setPersona,
   wallpaper,
-  setWallpaper
+  setWallpaper,
+  user,
+  onContinueSanctuary
 }) => {
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8 sm:py-12 space-y-14 animate-in fade-in duration-500">
@@ -57,26 +61,72 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
 
         {/* Primary Action Buttons */}
         <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5">
-          <button
-            id="hero-google-signin-btn"
-            onClick={onSignIn}
-            className="px-7 py-3.5 rounded-2xl bg-white hover:bg-neutral-100 text-neutral-950 font-bold text-sm flex items-center gap-2.5 shadow-[0_0_25px_rgba(255,255,255,0.3)] active:scale-95 transition-all cursor-pointer"
-          >
-            <LogIn className="w-4 h-4 text-neutral-900" />
-            <span>Continue with Google</span>
-          </button>
+          {user ? (
+            <button
+              id="hero-continue-sanctuary-btn"
+              onClick={onContinueSanctuary || onEnterGuest}
+              className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-bold text-sm flex items-center gap-2.5 shadow-[0_0_25px_rgba(129,140,248,0.5)] active:scale-95 transition-all cursor-pointer"
+            >
+              <span>Enter Sanctuary ({user.displayName || 'Seeker'}) →</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <>
+              <button
+                id="hero-google-signin-btn"
+                onClick={onSignIn}
+                className="px-7 py-3.5 rounded-2xl bg-white hover:bg-neutral-100 text-neutral-950 font-bold text-sm flex items-center gap-2.5 shadow-[0_0_25px_rgba(255,255,255,0.3)] active:scale-95 transition-all cursor-pointer"
+              >
+                <LogIn className="w-4 h-4 text-neutral-900" />
+                <span>Continue with Google</span>
+              </button>
 
-          <button
-            id="hero-guest-entry-btn"
-            onClick={onEnterGuest}
-            className="px-7 py-3.5 rounded-2xl backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 text-sm font-semibold flex items-center gap-2 active:scale-95 transition-all shadow-lg cursor-pointer"
-          >
-            <span>Enter Guest Sanctuary →</span>
-          </button>
+              <button
+                id="hero-guest-entry-btn"
+                onClick={onEnterGuest}
+                className="px-7 py-3.5 rounded-2xl backdrop-blur-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 text-sm font-semibold flex items-center gap-2 active:scale-95 transition-all shadow-lg cursor-pointer"
+              >
+                <span>Enter Guest Sanctuary →</span>
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Ambient Atmosphere Quick Switcher */}
+        <div className="pt-2 flex flex-col items-center gap-2">
+          <div className="text-[11px] font-mono text-indigo-200/80 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-300 animate-pulse" />
+            <span className="tracking-wider uppercase font-semibold">Ambient Atmosphere Palette</span>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl backdrop-blur-2xl bg-black/40 border border-white/15 max-w-full shadow-xl">
+            {Object.values(WALLPAPERS).map((w) => {
+              const isSelected = wallpaper === w.id;
+              return (
+                <button
+                  key={w.id}
+                  id={`hero-wallpaper-toggle-${w.id}`}
+                  onClick={() => setWallpaper(w.id)}
+                  title={w.description}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${
+                    isSelected 
+                      ? (w.activeClass || 'bg-white/25 text-white border border-white/40 shadow-lg ring-1 ring-white/50')
+                      : 'text-white/70 hover:text-white hover:bg-white/10 border border-transparent'
+                  }`}
+                >
+                  {/* Visual Glow Indicator Dot */}
+                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform ${w.dotColor || 'bg-white'} ${isSelected ? 'scale-125' : ''}`} />
+                  
+                  {/* Theme Icon & Label */}
+                  <span className="text-sm leading-none">{w.icon}</span>
+                  <span className="font-medium whitespace-nowrap">{w.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Security Assurance Tagline */}
-        <div className="pt-2 flex items-center justify-center gap-4 text-xs text-white/55 font-mono">
+        <div className="pt-1 flex flex-wrap items-center justify-center gap-4 text-xs text-white/55 font-mono">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             Isolated Single-User Vaults

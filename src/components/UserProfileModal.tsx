@@ -109,6 +109,18 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     fetchStats();
   }, [isOpen, user]);
 
+  // Escape Key & Global Listener to ensure modal can always be dismissed
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const validateInput = (value: string, fieldName: 'Display name' | 'Status badge'): boolean => {
@@ -234,15 +246,18 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     <>
       <div 
         id="user-profile-modal-backdrop"
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-2xl bg-black/80 animate-in fade-in duration-200"
+        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-2xl bg-black/80 animate-in fade-in duration-200 cursor-pointer"
+        role="dialog"
+        aria-modal="true"
       >
         <div 
           id="user-profile-modal-container"
-          className="relative w-full max-w-xl flex flex-col rounded-3xl backdrop-blur-2xl bg-neutral-900/90 border border-white/20 shadow-2xl p-6 sm:p-7 space-y-6 max-h-[92vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-xl flex flex-col rounded-3xl backdrop-blur-2xl bg-neutral-900/95 border border-white/20 shadow-2xl max-h-[92vh] overflow-hidden cursor-default"
         >
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          {/* Sticky Header - Always visible with Close Button */}
+          <div className="shrink-0 px-6 py-4 border-b border-white/10 flex items-center justify-between bg-neutral-900/95">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
                 <User className="w-5 h-5" />
@@ -252,7 +267,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   Your Sanctuary Identity
                 </h3>
                 <p className="text-xs text-white/60">
-                  Manage your display persona, status badge &amp; zero-trust vault stats
+                  Manage display persona, status badge &amp; zero-trust vault stats
                 </p>
               </div>
             </div>
@@ -260,13 +275,17 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <button
               id="close-profile-modal-btn"
               onClick={onClose}
-              className="p-2 rounded-2xl hover:bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all flex items-center gap-1.5 text-xs cursor-pointer active:scale-95 shadow-sm"
+              title="Close (Esc or click outside)"
             >
-              <X className="w-5 h-5" />
+              <span className="text-[10px] font-mono text-white/50 bg-black/40 px-1.5 py-0.5 rounded">ESC</span>
+              <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Identity Overview Hero Card */}
+          {/* Scrollable Body */}
+          <div className="flex-1 overflow-y-auto p-6 sm:p-7 space-y-6">
+            {/* Identity Overview Hero Card */}
           <div className="p-5 rounded-3xl bg-gradient-to-b from-white/10 to-white/5 border border-white/15 backdrop-blur-md flex flex-col sm:flex-row items-center gap-5">
             {/* Visual Avatar */}
             <div className="relative group shrink-0">
@@ -499,11 +518,18 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             </div>
           </div>
 
-          {/* Footer Actions (Sign In or Sign Out) */}
-          <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-            <div className="text-[11px] text-white/40 font-mono">
-              Directive #3: Passwordless Google Auth
-            </div>
+          </div>
+
+          {/* Sticky Footer Actions (Sign In or Sign Out & Pinned Close) */}
+          <div className="shrink-0 px-6 py-3.5 border-t border-white/10 flex items-center justify-between bg-neutral-900/95">
+            <button
+              id="profile-modal-footer-close-btn"
+              onClick={onClose}
+              className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Close</span>
+            </button>
 
             <div className="flex items-center gap-2.5">
               {isGuest ? (

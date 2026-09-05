@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Copy, 
@@ -130,11 +130,30 @@ export const SnippetShareModal: React.FC<SnippetShareModalProps> = ({
     }
   };
 
+  // Global Escape key dismissal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const themeStyle = getThemeStyles();
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xl flex items-center justify-center p-4">
-      <div className="w-full max-w-xl backdrop-blur-2xl bg-black/80 rounded-3xl border border-white/20 p-6 sm:p-7 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-y-auto">
+    <div 
+      id="snippet-share-modal-backdrop"
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xl flex items-center justify-center p-4 cursor-pointer"
+    >
+      <div 
+        id="snippet-share-modal-container"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-xl backdrop-blur-2xl bg-black/80 rounded-3xl border border-white/20 p-6 sm:p-7 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] overflow-y-auto cursor-default"
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
           <div className="flex items-center gap-2.5">

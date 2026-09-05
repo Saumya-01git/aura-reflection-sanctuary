@@ -24,6 +24,17 @@ export const SecurityAuditModal: React.FC<SecurityAuditModalProps> = ({ isOpen, 
   const [activeTab, setActiveTab] = useState<'threats' | 'rules' | 'owasp' | 'deployment'>('threats');
   const [copied, setCopied] = useState(false);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const campaignLabelCmd = `gcloud run services update aura-sanctuary \\
@@ -37,9 +48,13 @@ export const SecurityAuditModal: React.FC<SecurityAuditModalProps> = ({ isOpen, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-2xl bg-black/75 animate-in fade-in duration-200">
+    <div 
+      id="security-audit-modal-backdrop"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-2xl bg-black/75 animate-in fade-in duration-200 cursor-pointer"
+    >
       <div 
-        className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl backdrop-blur-2xl bg-neutral-900/90 border border-cyan-500/30 shadow-[0_0_50px_rgba(6,182,212,0.2)] overflow-hidden"
+        className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl backdrop-blur-2xl bg-neutral-900/90 border border-cyan-500/30 shadow-[0_0_50px_rgba(6,182,212,0.2)] overflow-hidden cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}

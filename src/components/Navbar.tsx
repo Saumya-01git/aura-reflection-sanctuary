@@ -16,7 +16,9 @@ import {
   VolumeX,
   Shield,
   Sliders,
-  User as UserIcon
+  User as UserIcon,
+  Home,
+  ArrowLeft
 } from 'lucide-react';
 import { PersonaId, WallpaperId, UserProfile } from '../types';
 import { PERSONAS, WALLPAPERS, STATUS_BADGES } from '../lib/personas';
@@ -38,6 +40,7 @@ interface NavbarProps {
   onSignOut: () => void;
   onUpdateStatusBadge: (badge: string) => void;
   onUpdateUser?: (updated: Partial<UserProfile>) => void;
+  onGoHome?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -51,7 +54,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSignIn,
   onSignOut,
   onUpdateStatusBadge,
-  onUpdateUser
+  onUpdateUser,
+  onGoHome
 }) => {
   const [showWallpaperMenu, setShowWallpaperMenu] = useState(false);
   const [showPersonaMenu, setShowPersonaMenu] = useState(false);
@@ -124,14 +128,22 @@ export const Navbar: React.FC<NavbarProps> = ({
   const activePersonaConfig = PERSONAS[persona] || PERSONAS.shayari;
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.37)] transition-all">
+    <header className={`sticky top-0 z-40 w-full backdrop-blur-xl transition-all ${
+      wallpaper === 'cosmic_starlight'
+        ? 'bg-[#090912]/70 border-b border-[rgba(167,139,250,0.25)] shadow-[0_4px_24px_rgba(99,102,241,0.2)]'
+        : 'bg-white/10 border-b border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.37)]'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between gap-3">
         {/* Left: Brand Identity */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-4">
           <button 
             id="aura-brand-btn"
-            onClick={() => setActiveTab('sanctuary')}
-            className="group flex items-center gap-3 text-left focus:outline-none"
+            onClick={() => {
+              if (onGoHome) onGoHome();
+              else setActiveTab('sanctuary');
+            }}
+            className="group flex items-center gap-3 text-left focus:outline-none cursor-pointer"
+            title="Return to Welcome Screen (1st Screen)"
           >
             {/* Custom Ethereal Glowing Prism Halo & Celestial Quill Emblem */}
             <div className="relative w-11 h-11 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-all duration-300">
@@ -189,6 +201,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </div>
           </button>
+
+          {/* Explicit Quick Return to 1st Screen (Welcome / Landing) */}
+          {onGoHome && (
+            <button
+              id="navbar-back-to-home-btn"
+              onClick={onGoHome}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold transition-all shadow-sm active:scale-95 cursor-pointer"
+              title="Return to Welcome Screen (1st Screen)"
+            >
+              <Home className="w-3.5 h-3.5 text-indigo-300" />
+              <span className="hidden sm:inline">1st Screen</span>
+            </button>
+          )}
 
           {/* Persona Quick Indicator / Selector (Cleanly in Center/Left) */}
           <div className="relative" ref={personaMenuRef}>
@@ -345,34 +370,53 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             {showWallpaperMenu && (
-              <div className="absolute right-0 mt-2 w-72 p-3 rounded-3xl backdrop-blur-2xl bg-black/80 border border-white/20 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/10">
-                  <span className="text-xs font-semibold text-white">Sanctuary Wallpaper</span>
-                  <span className="text-[10px] text-white/50 font-mono">Frosted Style</span>
+              <div className="absolute right-0 mt-2 w-80 p-3.5 rounded-3xl backdrop-blur-2xl bg-black/85 border border-white/20 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-purple-300" />
+                    <span className="text-xs font-semibold text-white">Atmosphere Wallpaper</span>
+                  </div>
+                  <span className="text-[10px] text-white/50 font-mono">5 Dynamic Themes</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  {Object.values(WALLPAPERS).map((w) => (
-                    <button
-                      key={w.id}
-                      id={`wallpaper-theme-${w.id}`}
-                      onClick={() => {
-                        setWallpaper(w.id);
-                        setShowWallpaperMenu(false);
-                      }}
-                      className={`group p-2 rounded-2xl border text-left transition-all ${
-                        wallpaper === w.id
-                          ? 'border-white/40 bg-white/20 shadow-md'
-                          : 'border-white/10 hover:border-white/20 bg-white/5'
-                      }`}
-                    >
-                      <div className={`w-full h-12 rounded-xl mb-2 ${w.previewBg} border border-white/20 relative overflow-hidden flex items-end p-1`}>
-                        {wallpaper === w.id && (
-                          <span className="w-2 h-2 rounded-full bg-indigo-300 ring-2 ring-white/30" />
-                        )}
-                      </div>
-                      <div className="text-[11px] font-medium text-white truncate">{w.name}</div>
-                    </button>
-                  ))}
+                  {Object.values(WALLPAPERS).map((w) => {
+                    const isSelected = wallpaper === w.id;
+                    return (
+                      <button
+                        key={w.id}
+                        id={`wallpaper-theme-${w.id}`}
+                        onClick={() => {
+                          setWallpaper(w.id);
+                          setShowWallpaperMenu(false);
+                        }}
+                        className={`group p-2 rounded-2xl border text-left transition-all cursor-pointer ${
+                          w.id === 'cosmic_starlight' ? 'col-span-2' : ''
+                        } ${
+                          isSelected
+                            ? (w.activeClass || 'border-indigo-300/50 bg-white/20 shadow-md ring-1 ring-indigo-400/40')
+                            : 'border-white/10 hover:border-white/20 bg-white/5'
+                        }`}
+                      >
+                        <div className={`w-full h-12 rounded-xl mb-1.5 ${w.previewBg} border border-white/20 relative overflow-hidden flex items-end justify-between p-1.5 shadow-inner`}>
+                          {w.id === 'cosmic_starlight' && (
+                            <div 
+                              className="absolute inset-0 opacity-80 pointer-events-none" 
+                              style={{
+                                backgroundImage: 'radial-gradient(#ffffff 0.75px, transparent 0.75px), radial-gradient(#c084fc 1px, transparent 1px)',
+                                backgroundSize: '12px 12px, 18px 18px',
+                                backgroundPosition: '0 0, 6px 6px'
+                              }}
+                            />
+                          )}
+                          <span className="text-sm z-10">{w.icon}</span>
+                          <span className={`w-2.5 h-2.5 rounded-full z-10 ${w.dotColor || 'bg-white'}`} />
+                        </div>
+                        <div className="text-[11px] font-semibold text-white truncate flex items-center gap-1">
+                          <span>{w.name}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}

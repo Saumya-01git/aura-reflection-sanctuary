@@ -15,7 +15,7 @@ export interface PersonaConfig {
   samplePrompt: string;
 }
 
-export type WallpaperId = 'lofi_rain' | 'sunset' | 'cyber_focus' | 'obsidian';
+export type WallpaperId = 'lofi_rain' | 'sunset' | 'cyber_focus' | 'obsidian' | 'cosmic_starlight';
 
 export interface WallpaperConfig {
   id: WallpaperId;
@@ -24,6 +24,9 @@ export interface WallpaperConfig {
   previewBg: string;
   cardBg: string;
   accentBorder: string;
+  icon?: string;
+  dotColor?: string;
+  activeClass?: string;
 }
 
 export interface ChatMessage {

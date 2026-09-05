@@ -28,7 +28,8 @@ import {
   MicOff,
   Image as ImageIcon,
   Calendar,
-  ChevronDown
+  ChevronDown,
+  ArrowUp
 } from 'lucide-react';
 import { PersonaId, WallpaperId, ChatMessage, UserProfile, PolaroidMoment, JournalSession } from '../types';
 import { PERSONAS, WALLPAPERS } from '../lib/personas';
@@ -167,8 +168,30 @@ export const PersonalSanctuary: React.FC<PersonalSanctuaryProps> = ({
   });
   const [toastData, setToastData] = useState<ToastData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const recognitionRef = useRef<any>(null);
   const baseTranscriptRef = useRef<string>('');
+
+  // Handle conversation scroll to show/hide the upward arrow "Scroll to Top" button
+  const handleMessagesScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = e.currentTarget.scrollTop;
+    setShowScrollTop(scrollTop > 100);
+  };
+
+  // Smoothly scroll back to the top of the conversation
+  const scrollToTop = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages.length]);
 
   // Close tools dropdown on click outside
   useEffect(() => {
@@ -610,7 +633,11 @@ export const PersonalSanctuary: React.FC<PersonalSanctuaryProps> = ({
     <div className="w-full max-w-5xl mx-auto flex flex-col h-full min-h-0">
       {/* Main Conversation Canvas (Glassmorphic WhatsApp-style Card Container with expanded vertical canvas) */}
       <div 
-        className="flex-1 flex flex-col rounded-[32px] border border-white/15 shadow-2xl overflow-hidden backdrop-blur-xl bg-black/25 transition-all duration-500 min-h-0"
+        className={`flex-1 flex flex-col rounded-[32px] overflow-hidden backdrop-blur-xl transition-all duration-500 min-h-0 ${
+          wallpaper === 'cosmic_starlight'
+            ? 'border border-[rgba(167,139,250,0.25)] shadow-[0_8px_32px_rgba(99,102,241,0.25),0_0_24px_rgba(167,139,250,0.15)] bg-[#090912]/45'
+            : 'border border-white/15 shadow-2xl bg-black/25'
+        }`}
       >
         {/* Sanctuary Header Sub-Bar */}
         <div className="px-5 py-3 backdrop-blur-md bg-white/5 border-b border-white/10 flex items-center justify-between gap-3 text-xs shrink-0">
@@ -783,7 +810,13 @@ export const PersonalSanctuary: React.FC<PersonalSanctuaryProps> = ({
         </div>
 
         {/* Message Thread (Pure conversation viewport, takes full vertical height) */}
-        <div className="flex-1 min-h-0 p-4 sm:p-6 overflow-y-auto space-y-4">
+        <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div 
+            id="sanctuary-messages-container"
+            ref={messagesContainerRef}
+            onScroll={handleMessagesScroll}
+            className="flex-1 min-h-0 p-4 sm:p-6 overflow-y-auto space-y-4"
+          >
 
           {/* Quick Carousel of Recent Polaroid Moments if any */}
           {recentMoments.length > 0 && (
@@ -1008,10 +1041,25 @@ export const PersonalSanctuary: React.FC<PersonalSanctuaryProps> = ({
           )}
 
           <div ref={messagesEndRef} />
+          </div>
+
+          {/* Floating Upward Arrow Button: Scrolls straight to top of conversation */}
+          {showScrollTop && (
+            <button
+              id="scroll-to-top-btn"
+              type="button"
+              onClick={scrollToTop}
+              className="absolute bottom-4 right-6 z-30 flex items-center gap-1.5 px-3.5 py-2 rounded-full backdrop-blur-2xl bg-indigo-600/90 hover:bg-indigo-500 text-white border border-indigo-300/40 shadow-[0_4px_20px_rgba(99,102,241,0.55)] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer text-xs font-semibold animate-in fade-in zoom-in-90 group"
+              title="Scroll to top of reflection"
+            >
+              <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+              <span className="tracking-wide">Top</span>
+            </button>
+          )}
         </div>
 
-        {/* Quick Suggestion Chips */}
-        <div className="px-4 py-2.5 backdrop-blur-md bg-white/5 border-t border-white/10 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        {/* Quick Suggestion Chips (Pinned above input) */}
+        <div className="px-4 py-2.5 backdrop-blur-md bg-white/5 border-t border-white/10 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
           <span className="text-[10px] uppercase font-mono tracking-wider text-white/50 shrink-0">
             Prompts:
           </span>
@@ -1027,8 +1075,8 @@ export const PersonalSanctuary: React.FC<PersonalSanctuaryProps> = ({
           ))}
         </div>
 
-        {/* Input Bar */}
-        <div className="p-3 sm:p-4 backdrop-blur-xl bg-black/30 border-t border-white/10">
+        {/* Input Bar (Permanently pinned at bottom like Gemini) */}
+        <div className="p-3 sm:p-4 backdrop-blur-xl bg-black/30 border-t border-white/10 shrink-0">
           {/* Live Voice Dictation Pulse Wave Animation */}
           {isDictating && (
             <div className="mb-2.5 px-3.5 py-2 rounded-2xl backdrop-blur-2xl bg-rose-950/70 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-200">

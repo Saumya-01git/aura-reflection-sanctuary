@@ -63,14 +63,29 @@ export const AvatarCustomizerModal: React.FC<AvatarCustomizerModalProps> = ({
   user,
   onSelectPreset,
 }) => {
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const currentPresetId: AvatarPresetId = user?.customAvatarPreset || 'google';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-2xl bg-black/75 animate-in fade-in duration-200">
+    <div 
+      id="avatar-customizer-modal-backdrop"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-2xl bg-black/75 animate-in fade-in duration-200 cursor-pointer"
+    >
       <div 
-        className="relative w-full max-w-md rounded-3xl backdrop-blur-2xl bg-neutral-900/90 border border-cyan-500/30 shadow-2xl p-6 space-y-5"
+        className="relative w-full max-w-md rounded-3xl backdrop-blur-2xl bg-neutral-900/90 border border-cyan-500/30 shadow-2xl p-6 space-y-5 cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-white/10 pb-4">

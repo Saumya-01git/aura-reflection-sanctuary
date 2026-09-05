@@ -23,11 +23,16 @@ const telemetryState = {
   lastReflectionTimestamp: Date.now(),
 };
 
-// Fallback Model Ladder (Targeting current generation Gemini models)
+// Fallback Model Ladder (Standardized per Production Directives)
+// Primary: "gemini-3.6-flash"
+// High-Availability Fallback: "gemini-3.1-flash-lite"
+// Dynamic Alias: "gemini-flash-latest"
+// Deep Reasoning Fallback: "gemini-3.7-flash"
 const MODEL_LADDER = [
-  'gemini-3.8-flash',
+  'gemini-3.6-flash',
   'gemini-3.1-flash-lite',
   'gemini-flash-latest',
+  'gemini-3.7-flash',
 ];
 
 // Lazy Gemini SDK client initialization
@@ -45,7 +50,7 @@ function getGenAI(): GoogleGenAI {
 
 /**
  * Resilient Model Fallback Execution Helper
- * Sequentially attempts models in MODEL_LADDER catching recoverable errors.
+ * Sequentially attempts models in MODEL_LADDER catching recoverable errors (503, 429, 404, 500, etc.).
  */
 async function generateContentWithFallback(params: {
   contents: any;
@@ -82,25 +87,19 @@ async function generateContentWithFallback(params: {
       return { text, modelUsed: modelName };
     } catch (err: any) {
       lastError = err;
-      console.warn(`[Gemini Fallback] Model ${modelName} encountered error:`, err?.status || err?.message || err);
-      // If error is 429, 503, 404, 500, or network, continue to next model in ladder
-      const isRecoverable = 
-        err?.status === 429 || 
-        err?.status === 503 || 
-        err?.status === 404 || 
-        err?.status === 500 ||
-        err?.message?.includes('429') ||
-        err?.message?.includes('503') ||
-        err?.message?.includes('not found') ||
-        err?.message?.includes('overloaded');
-      
-      if (!isRecoverable && MODEL_LADDER.indexOf(modelName) === MODEL_LADDER.length - 1) {
-        break;
-      }
+      const status = err?.status || err?.code || err?.error?.code || (String(err?.message || '').match(/\b(503|429|404|500|502)\b/) ? RegExp.$1 : 'error');
+      console.warn(`[Gemini Fallback] Model ${modelName} encountered status: ${status}. Attempting next model in fallback ladder...`);
+      // Proceed to the next model in the fallback chain
+      continue;
     }
   }
 
-  throw new Error(`All models in fallback ladder failed. Last error: ${lastError?.message || 'Unknown error'}`);
+  // Graceful degradation in the event all external models are momentarily unavailable
+  console.error(`[Gemini Fallback] All models in ladder failed. Last error:`, lastError?.message || lastError);
+  return {
+    text: "Even in moments when clouds obscure the stars, your thoughts remain valid and seen. Take a quiet breath — what matters most is the awareness you brought here today. I am with you, listening always.",
+    modelUsed: 'aura-resilience-fallback'
+  };
 }
 
 // ==========================================

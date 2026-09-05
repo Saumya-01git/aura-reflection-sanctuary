@@ -73,35 +73,58 @@ When the user reflects on their day or a scenario:
 export const WALLPAPERS: Record<string, WallpaperConfig> = {
   lofi_rain: {
     id: 'lofi_rain',
-    name: 'Frosted Midnight Glass',
-    description: 'Deep royal violet & indigo mist with translucent frosted glass and subtle star grid',
-    previewBg: 'bg-gradient-to-br from-[#2D1B69] via-[#110C1B] to-[#3D1C3C]',
-    cardBg: 'backdrop-blur-xl bg-white/10 border-white/20',
-    accentBorder: 'border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.37)]'
+    name: 'Midnight Sapphire Glass',
+    description: 'Deep royal blue & midnight violet with frosted glass luminosity and cyan rainglow',
+    previewBg: 'bg-gradient-to-br from-blue-900 via-indigo-950 to-slate-950',
+    cardBg: 'backdrop-blur-xl bg-blue-950/40 border-blue-400/20',
+    accentBorder: 'border-blue-400/40 shadow-[0_8px_32px_rgba(37,99,235,0.25)]',
+    icon: '🌧️',
+    dotColor: 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]',
+    activeClass: 'bg-gradient-to-r from-blue-600/35 to-indigo-600/35 border-blue-400/60 text-white shadow-[0_0_16px_rgba(59,130,246,0.5)] ring-1 ring-blue-400/50'
   },
   sunset: {
     id: 'sunset',
     name: 'Frosted Sunset Glow',
-    description: 'Rich dusk violet, soft amber horizon glow, and frosted translucency',
-    previewBg: 'bg-gradient-to-br from-purple-950 via-pink-950/40 to-amber-950/40',
-    cardBg: 'backdrop-blur-xl bg-white/10 border-pink-400/20',
-    accentBorder: 'border-pink-400/30 shadow-[0_8px_32px_rgba(236,72,153,0.15)]'
+    description: 'Warm dusk violet, radiant amber horizon glow, and coral peach clouds',
+    previewBg: 'bg-gradient-to-br from-amber-600 via-rose-700 to-purple-950',
+    cardBg: 'backdrop-blur-xl bg-pink-950/40 border-pink-400/25',
+    accentBorder: 'border-rose-400/40 shadow-[0_8px_32px_rgba(244,63,94,0.25)]',
+    icon: '🌅',
+    dotColor: 'bg-gradient-to-r from-amber-400 to-rose-400 shadow-[0_0_8px_rgba(251,146,60,0.9)]',
+    activeClass: 'bg-gradient-to-r from-amber-500/35 via-rose-500/35 to-purple-500/35 border-rose-400/60 text-white shadow-[0_0_16px_rgba(244,63,94,0.5)] ring-1 ring-rose-400/50'
   },
   cyber_focus: {
     id: 'cyber_focus',
     name: 'Frosted Emerald Aura',
-    description: 'Deep obsidian glass with frosted emerald undertones',
-    previewBg: 'bg-gradient-to-br from-neutral-950 via-emerald-950/30 to-teal-950/40',
-    cardBg: 'backdrop-blur-xl bg-white/10 border-emerald-400/20',
-    accentBorder: 'border-emerald-400/30 shadow-[0_8px_32px_rgba(52,211,153,0.15)]'
+    description: 'Luminous Aurora Borealis with vibrant emerald, teal sea tides, and jade bioluminescence',
+    previewBg: 'bg-gradient-to-br from-emerald-600 via-teal-800 to-slate-950',
+    cardBg: 'backdrop-blur-xl bg-emerald-950/40 border-emerald-400/25',
+    accentBorder: 'border-emerald-400/40 shadow-[0_8px_32px_rgba(16,185,129,0.25)]',
+    icon: '🌿',
+    dotColor: 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]',
+    activeClass: 'bg-gradient-to-r from-emerald-600/35 to-teal-600/35 border-emerald-400/60 text-white shadow-[0_0_16px_rgba(16,185,129,0.5)] ring-1 ring-emerald-400/50'
   },
   obsidian: {
     id: 'obsidian',
     name: 'Minimal Frosted Titanium',
-    description: 'Pure frosted translucency with subtle titanium borders',
-    previewBg: 'bg-gradient-to-br from-neutral-950 via-stone-900/40 to-neutral-900',
-    cardBg: 'backdrop-blur-xl bg-white/10 border-white/15',
-    accentBorder: 'border-white/20 shadow-[0_8px_32px_rgba(255,255,255,0.05)]'
+    description: 'Pure frosted translucency with sleek platinum silver, slate blue, and charcoal onyx',
+    previewBg: 'bg-gradient-to-br from-slate-600 via-zinc-800 to-neutral-950',
+    cardBg: 'backdrop-blur-xl bg-slate-900/40 border-slate-300/20',
+    accentBorder: 'border-slate-300/30 shadow-[0_8px_32px_rgba(255,255,255,0.1)]',
+    icon: '✨',
+    dotColor: 'bg-slate-200 shadow-[0_0_8px_rgba(241,245,249,0.8)]',
+    activeClass: 'bg-gradient-to-r from-slate-700/45 to-zinc-700/45 border-slate-300/60 text-white shadow-[0_0_16px_rgba(255,255,255,0.3)] ring-1 ring-slate-300/50'
+  },
+  cosmic_starlight: {
+    id: 'cosmic_starlight',
+    name: 'Cosmic Starlight',
+    description: 'Authentic starry night sky: deep obsidian canvas, 130 twinkling stars, shooting stars, and nebulae',
+    previewBg: 'bg-gradient-to-br from-violet-600 via-indigo-900 to-[#090912]',
+    cardBg: 'backdrop-blur-xl bg-[#090912]/50 border-[rgba(167,139,250,0.3)]',
+    accentBorder: 'border-[rgba(167,139,250,0.4)] shadow-[0_8px_32px_rgba(99,102,241,0.3),0_0_24px_rgba(167,139,250,0.2)]',
+    icon: '🌌',
+    dotColor: 'bg-gradient-to-r from-violet-400 to-cyan-400 shadow-[0_0_8px_rgba(167,139,250,0.9)]',
+    activeClass: 'bg-gradient-to-r from-violet-600/40 to-indigo-600/40 border-purple-400/60 text-white shadow-[0_0_20px_rgba(167,139,250,0.5)] ring-1 ring-purple-400/50'
   }
 };
 

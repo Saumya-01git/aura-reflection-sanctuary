@@ -45,11 +45,27 @@ import { Sidebar, MobileBottomNav } from './components/Sidebar';
 export default function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [persona, setPersona] = useState<PersonaId>('shayari');
-  const [wallpaper, setWallpaper] = useState<WallpaperId>('lofi_rain');
+  const [wallpaper, setWallpaper] = useState<WallpaperId>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('aura_wallpaper') as WallpaperId;
+      if (saved && saved !== 'lofi_rain') return saved;
+    }
+    return 'cosmic_starlight';
+  });
   const [activeTab, setActiveTab] = useState<'sanctuary' | 'flashback' | 'duo' | 'timecapsule' | 'telemetry'>('sanctuary');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  // Controls whether the user is viewing the 1st screen (Welcome / Landing Hero)
+  const [viewingWelcome, setViewingWelcome] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('aura_entered') !== 'true';
+    }
+    return true;
+  });
   const [isGuestMode, setIsGuestMode] = useState<boolean>(() => {
-    return localStorage.getItem('aura_guest_mode') !== 'false';
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('aura_guest_mode') === 'true';
+    }
+    return false;
   });
 
   // Public snippet query param check
@@ -79,7 +95,9 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setIsGuestMode(false);
+        setViewingWelcome(false);
         localStorage.removeItem('aura_guest_mode');
+        localStorage.setItem('aura_entered', 'true');
 
         // Fetch or create user document in Firestore (/users/{userId})
         try {
@@ -95,12 +113,16 @@ export default function App() {
               photoURL: firebaseUser.photoURL,
               statusBadge: data.statusBadge || '🌌 Deep in contemplation',
               preferredPersona: data.preferredPersona || 'shayari',
-              preferredWallpaper: data.preferredWallpaper || 'lofi_rain',
+              preferredWallpaper: data.preferredWallpaper || 'cosmic_starlight',
               createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : Date.now()
             };
             setUser(profile);
             if (data.preferredPersona) setPersona(data.preferredPersona);
-            if (data.preferredWallpaper) setWallpaper(data.preferredWallpaper);
+            if (data.preferredWallpaper && data.preferredWallpaper !== 'lofi_rain') {
+              setWallpaper(data.preferredWallpaper);
+            } else {
+              setWallpaper('cosmic_starlight');
+            }
           } else {
             // New user setup
             const initialProfile: UserProfile = {
@@ -110,7 +132,7 @@ export default function App() {
               photoURL: firebaseUser.photoURL,
               statusBadge: '🌌 Deep in contemplation',
               preferredPersona: 'shayari',
-              preferredWallpaper: 'lofi_rain',
+              preferredWallpaper: 'cosmic_starlight',
               createdAt: Date.now()
             };
 
@@ -121,7 +143,7 @@ export default function App() {
               photoURL: firebaseUser.photoURL,
               statusBadge: '🌌 Deep in contemplation',
               preferredPersona: 'shayari',
-              preferredWallpaper: 'lofi_rain',
+              preferredWallpaper: 'cosmic_starlight',
               createdAt: serverTimestamp()
             }));
 
@@ -163,7 +185,9 @@ export default function App() {
   // Guest Sanctuary Mode
   const enableGuest = () => {
     setIsGuestMode(true);
+    setViewingWelcome(false);
     localStorage.setItem('aura_guest_mode', 'true');
+    localStorage.setItem('aura_entered', 'true');
     setUser({
       uid: 'guest-user',
       email: null,
@@ -172,6 +196,26 @@ export default function App() {
       statusBadge: '🧘 Seeking grounded clarity',
       createdAt: Date.now()
     });
+  };
+
+  // Return to 1st Screen (Welcome / Landing Screen)
+  const handleGoHome = () => {
+    setViewingWelcome(true);
+    try {
+      localStorage.setItem('aura_entered', 'false');
+    } catch (e) {}
+    setActiveTab('sanctuary');
+  };
+
+  // Enter Sanctuary from 1st Screen
+  const handleEnterSanctuary = () => {
+    setViewingWelcome(false);
+    try {
+      localStorage.setItem('aura_entered', 'true');
+    } catch (e) {}
+    if (!user) {
+      enableGuest();
+    }
   };
 
   // Journal Sessions Engine (History & Archive)
@@ -268,11 +312,14 @@ export default function App() {
     try {
       await firebaseSignOut(auth);
       setIsGuestMode(false);
+      setViewingWelcome(true);
       localStorage.removeItem('aura_guest_mode');
+      localStorage.setItem('aura_entered', 'false');
       setUser(null);
     } catch (e) {
       setUser(null);
       setIsGuestMode(false);
+      setViewingWelcome(true);
     }
   };
 
@@ -294,6 +341,9 @@ export default function App() {
   // Update Preferred Wallpaper
   const handleSetWallpaper = async (w: WallpaperId) => {
     setWallpaper(w);
+    try {
+      localStorage.setItem('aura_wallpaper', w);
+    } catch (e) {}
     if (user && user.uid !== 'guest-user') {
       try {
         await updateDoc(doc(db, 'users', user.uid), { preferredWallpaper: w });
@@ -338,45 +388,54 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col text-neutral-100 relative selection:bg-indigo-500/30 selection:text-indigo-200">
+    <div className="h-screen h-[100dvh] max-h-screen overflow-hidden flex flex-col text-neutral-100 relative selection:bg-indigo-500/30 selection:text-indigo-200">
       {/* Dynamic Ambient Background Mesh */}
       <AmbientBackground wallpaper={wallpaper} />
 
       {/* Main Navbar */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        persona={persona}
-        setPersona={handleSetPersona}
-        wallpaper={wallpaper}
-        setWallpaper={handleSetWallpaper}
-        user={user}
-        onSignIn={handleGoogleSignIn}
-        onSignOut={handleSignOut}
-        onUpdateStatusBadge={handleUpdateStatusBadge}
-        onUpdateUser={(updated) => setUser((prev) => prev ? { ...prev, ...updated } : null)}
-      />
+      <div className="shrink-0 relative z-20">
+        <Navbar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          persona={persona}
+          setPersona={handleSetPersona}
+          wallpaper={wallpaper}
+          setWallpaper={handleSetWallpaper}
+          user={user}
+          onSignIn={handleGoogleSignIn}
+          onSignOut={handleSignOut}
+          onUpdateStatusBadge={handleUpdateStatusBadge}
+          onUpdateUser={(updated) => setUser((prev) => prev ? { ...prev, ...updated } : null)}
+          onGoHome={handleGoHome}
+        />
+      </div>
 
       {/* Main Sanctuary Body with Frosted Glass Left Sidebar */}
-      <div className={`flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 flex flex-col ${
-        activeTab === 'sanctuary' ? 'py-3 h-[calc(100vh-4.25rem)] overflow-hidden' : 'py-3 sm:py-4 pb-24 md:pb-4'
+      <div className={`flex-1 min-h-0 max-w-7xl w-full mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex flex-col relative z-10 ${
+        viewingWelcome ? 'overflow-y-auto' : 'overflow-hidden'
       }`}>
-        {!user && !isGuestMode ? (
+        {viewingWelcome ? (
           <LandingHero
-            onSignIn={handleGoogleSignIn}
-            onEnterGuest={enableGuest}
+            onSignIn={async () => {
+              await handleGoogleSignIn();
+              setViewingWelcome(false);
+            }}
+            onEnterGuest={handleEnterSanctuary}
+            onContinueSanctuary={handleEnterSanctuary}
             currentPersona={persona}
             setPersona={handleSetPersona}
             wallpaper={wallpaper}
             setWallpaper={handleSetWallpaper}
+            user={user}
           />
         ) : (
-          <div className={`flex-1 flex gap-4 lg:gap-5 w-full items-stretch min-h-0 ${activeTab === 'sanctuary' ? 'h-full overflow-hidden' : ''}`}>
+          <div className="flex-1 flex gap-4 lg:gap-5 w-full items-stretch min-h-0 overflow-hidden">
             {/* Elegant Left Sidebar Navigation & Journal Archive */}
             <Sidebar
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               persona={persona}
+              wallpaper={wallpaper}
               user={user}
               isCollapsed={isSidebarCollapsed}
               onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -384,10 +443,13 @@ export default function App() {
               activeSessionId={activeSessionId}
               onNewReflection={handleNewReflection}
               onSelectSession={handleSelectSession}
+              onGoHome={handleGoHome}
             />
 
             {/* Main Content Pane */}
-            <main className="flex-1 min-w-0 flex flex-col w-full h-full min-h-0">
+            <main className={`flex-1 min-w-0 flex flex-col w-full h-full min-h-0 ${
+              activeTab === 'sanctuary' ? 'overflow-hidden' : 'overflow-y-auto'
+            }`}>
               {activeTab === 'sanctuary' && (
                 <PersonalSanctuary
                   persona={persona}
@@ -435,6 +497,7 @@ export default function App() {
             <MobileBottomNav
               activeTab={activeTab}
               setActiveTab={setActiveTab}
+              onGoHome={handleGoHome}
             />
           </div>
         )}

@@ -1,19 +1,167 @@
 @import "tailwindcss";
 
 @layer base {
-  body {
-    min-height: 100vh;
-    background: radial-gradient(circle at top left, #2D1B69 0%, #110C1B 50%, #3D1C3C 100%);
-    background-attachment: fixed;
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #06070a;
     color: #ffffff;
-    overflow-x: hidden;
   }
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Frosted Glass subtle dot grid overlay */
 .frosted-dot-pattern {
   background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px);
   background-size: 24px 24px;
+}
+
+/* Cosmic Starlight Pure CSS Animations */
+@keyframes cosmic-twinkle-subtle {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes cosmic-twinkle-vivid {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes cosmic-sparkle-spin {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.75) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(45deg);
+    filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.9));
+  }
+}
+
+@keyframes shooting-star-glide {
+  0% {
+    transform: translateX(0) translateY(0) rotate(-35deg) scale(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+    transform: translateX(-40px) translateY(28px) rotate(-35deg) scale(1);
+  }
+  25% {
+    transform: translateX(-240px) translateY(168px) rotate(-35deg) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translateX(-420px) translateY(294px) rotate(-35deg) scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-420px) translateY(294px) rotate(-35deg) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes celestial-nebula-pulse {
+  0%, 100% {
+    transform: scale(1) translate(0px, 0px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.07) translate(-8px, 6px);
+    opacity: 0.85;
+  }
+}
+
+.animate-cosmic-twinkle-slow {
+  animation: cosmic-twinkle-subtle 6s ease-in-out infinite;
+}
+
+.animate-cosmic-twinkle-fast {
+  animation: cosmic-twinkle-vivid 3.5s ease-in-out infinite;
+}
+
+.animate-cosmic-sparkle {
+  animation: cosmic-sparkle-spin 5s ease-in-out infinite;
+}
+
+.animate-shooting-star-1 {
+  animation: shooting-star-glide 8s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  animation-delay: 1.5s;
+}
+
+.animate-shooting-star-2 {
+  animation: shooting-star-glide 12s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  animation-delay: 6s;
+}
+
+.animate-celestial-nebula {
+  animation: celestial-nebula-pulse 16s ease-in-out infinite;
+}
+
+@keyframes aurora-wave-drift {
+  0%, 100% {
+    transform: scale(1) translateY(0px) rotate(0deg);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.1) translateY(-18px) rotate(1deg);
+    opacity: 0.95;
+  }
+}
+
+@keyframes sunset-ember-drift {
+  0% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-260px) translateX(25px);
+    opacity: 0;
+  }
+}
+
+.animate-aurora-wave {
+  animation: aurora-wave-drift 14s ease-in-out infinite;
+}
+
+.animate-sunset-ember {
+  animation: sunset-ember-drift 8s ease-in-out infinite;
 }
 
 /* Glassmorphism utility helpers */
