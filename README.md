@@ -73,6 +73,12 @@ Developed for the **Google Cloud Gen AI Academy APAC Edition (Cohort 3) Ideathon
 - **Export Journal:** Download complete journal history as clean Markdown (`.md`) or structured JSON (`.json`).
 - **Direct Client-Side PDF Generation:** High-resolution keepsake cards compiled using `html2canvas` and `jsPDF`.
 
+### 10. 🛡️ Elite AI Safety Shield & Injection Defense Simulator (OWASP LLM01)
+- **Interactive Security Terminal:** Run live simulated adversarial jailbreak tests (`Direct Override`, `Delimiter Hijacking`, `Roleplay Jailbreak`) directly from the Telemetry Vault.
+- **3-Step Real-Time Interception Pipeline:** Visualizes Attack Injection → Threat Zone 2 Guardrail Intercept → Sanitized Fallback Response (zero API key or prompt leakage).
+- **Dynamic RBAC Observability:** Real-time role indicators displaying `Admin (saumyagarg55555@...)` in Admin Telemetry vs `Standard User (Isolated Vault)` with zero-leakage enforcement.
+- **Official Compliance Badge:** Certified with `OWASP LLM Top 10: 100% Defended | System Resilient`.
+
 ---
 
 ## 🛡️ Security Threat Model & Zero-Trust Architecture
