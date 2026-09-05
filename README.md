@@ -31,23 +31,31 @@ Developed for the **Google Cloud Gen AI Academy APAC Edition (Cohort 3) Ideathon
 A peaceful, frosted glass entrance featuring customizable atmospheric themes, four interactive persona previews, and frictionless Google SSO / Guest access.
 ![Aura Landing Sanctuary](docs/screenshots/01_landing_hero.png)
 
-### 2. Main Reflection Sanctuary with Roman Urdu Poetic Soul ("Alfaaz") & Audio
+### 2. Dynamic Atmospheric Theme Switching (Frosted Sunset Glow)
+Users can seamlessly switch between 5 dynamic ambient lighting environments (Cosmic Starlight, Frosted Sunset Glow, Midnight Sapphire, Frosted Emerald, and Minimal Titanium) with reactive frosted glassmorphism.
+![Aura Frosted Sunset Glow Theme](docs/screenshots/07_sunset_glow_theme.png)
+
+### 3. Main Reflection Sanctuary with Roman Urdu Poetic Soul ("Alfaaz") & Audio
 Real-time conversational reflection with Daily Epiphany inspiration, Roman Urdu/Hindi couplets with English translation, two-way voice dictation and speech recitation, and keepsake generation.
 ![Aura Main Sanctuary Chat](docs/screenshots/02_personal_sanctuary_chat.png)
 
-### 3. Perspective Shift Flashbacks & Growth Memory System
+### 4. Selective Privacy-Preserving Sharing ("Smart Quote Cards")
+Solves the fundamental AI privacy dilemma: users can safely share deep epiphanies and poetic couplets with zero private journal history or identity attached. Features one-click public links and social sharing (WhatsApp, LinkedIn, Twitter/X).
+![Aura Privacy Preserving Quote Card](docs/screenshots/08_privacy_share_quote_card.png)
+
+### 5. Perspective Shift Flashbacks & Growth Memory System
 Surfaces past milestone reflections with Gemini-powered cognitive reframing to dismantle imposter syndrome and celebrate how far you have climbed.
 ![Aura Perspective Shift Flashbacks](docs/screenshots/04_perspective_flashbacks.png)
 
-### 4. Aesthetic Keepsake Card & Direct PDF Export
+### 6. Aesthetic Keepsake Card & Direct PDF Export
 Users can select any milestone or reflection verse and format it into a high-craft printable keepsake card with multiple themes (Frosted Gold, Velvet Night, Cyan Glass, Obsidian) exportable to PDF.
 ![Aura Keepsake Card Export](docs/screenshots/05_keepsake_card_export.png)
 
-### 5. System Telemetry & High-Availability Gemini Model Ladder
+### 7. System Telemetry & High-Availability Gemini Model Ladder
 Real-time operational health observability tracking live reflections, active sessions, container uptime, and the multi-tiered Gemini fallback protocol.
 ![Aura System Telemetry & Gemini Ladder](docs/screenshots/03_telemetry_gemini_ladder.png)
 
-### 6. Zero-Trust Security Threat Model & OWASP Compliance
+### 8. Zero-Trust Security Threat Model & OWASP Compliance
 Full enterprise compliance mapping the 5 Threat Zones to defensive countermeasures, verified with zero-leakage RBAC telemetry.
 ![Aura Security Compliance Matrix](docs/screenshots/06_security_audit_threat_zones.png)
 
@@ -125,6 +133,19 @@ Aura is engineered as a **safe, sensory sanctuary**. It combines the reasoning o
 - **3-Step Real-Time Interception Pipeline:** Visualizes Attack Injection → Threat Zone 2 Guardrail Intercept → Sanitized Fallback Response (zero API key, zero prompt, zero system leakage).
 - **Dynamic RBAC Observability:** Real-time role indicators displaying `Admin (saumyagarg55555@...)` in Admin Telemetry vs `Standard User (Isolated Vault)` with zero-leakage enforcement.
 - **Official Compliance Badge:** Certified with `OWASP LLM Top 10: 100% Defended | System Resilient`.
+
+---
+
+### 💎 Micro-UX Delights & Precision Details
+
+Beyond the macro architectural features, Aura is crafted with thoughtful micro-interactions:
+- 📱 **Locked 100dvh Viewport & Clean Architecture:** Eliminates awkward mobile scroll jumps and disappearing text inputs. Features independent scrollers, a pinned bottom composer, and a floating `[↑ Top]` jump button.
+- 🏷️ **8 Contextual Mood Badges:** Profile status tags visible to Squad teammates (`Lyrical & reflective`, `Seeking grounded clarity`, `Writing verses in solitude`, `High-velocity building`, `Hackathon sprint mode`, `Midnight reflection`).
+- 💡 **Daily Epiphany Inspiration Banner:** Daily builder philosophy displayed at the top with ambient audio narration and a direct 1-click *"Reflect"* button to spark instant journaling.
+- 🔍 **Real-Time Memory Search & Calendar Filtering:** Search through years of reflections using keyword search and calendar date filters.
+- 🕯️ **Interactive Wax Seal & Confetti Celebration:** Time capsules lock behind an authentic wax countdown seal that triggers an animated confetti explosion upon unlocking.
+- 📋 **1-Click Formatted Card Copy & Social Integrations:** Direct one-click formatted card text copying and native share intents for WhatsApp, LinkedIn, and Twitter/X.
+- 🔒 **Zero-Trust Visual Indicator:** Persistent `[Zero-Trust Vault: ISOLATED]` badge assuring users that zero private journal text ever enters external telemetry sinks.
 
 ---
 
@@ -276,7 +297,7 @@ cp .env.example .env
 npm run dev
 
 # 5. Open in browser
-# http://localhost:5173
+# http://localhost:3000 (Unified Full-Stack Express + Vite) or http://localhost:5173 (Vite Dev)
 ```
 
 ---
