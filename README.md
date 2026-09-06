@@ -1,6 +1,6 @@
 # 🌙 Aura — AI Reflection Sanctuary & Growth Vault
 
-[![Google Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-Deployed-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
+[![Google Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-Container_Ready-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
 [![Firebase Authentication](https://img.shields.io/badge/Firebase_Auth-Federated_SSO-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![Cloud Firestore](https://img.shields.io/badge/Cloud_Firestore-Isolated_Vaults-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/docs/firestore)
 [![Gemini Flash & Pro](https://img.shields.io/badge/Gemini_API-Multimodal_Intelligence-8E75C2?logo=googlegemini&logoColor=white)](https://aistudio.google.com/)
@@ -15,7 +15,7 @@ Developed for the **Google Cloud Gen AI Academy APAC Edition (Cohort 3) Ideathon
 
 ---
 
-## 📹 Video Walkthrough & Live Submission Links
+## 📋 Submission & Project Information
 
 - 💻 **Public GitHub Codebase:** [https://github.com/Saumya-01git/aura-reflection-sanctuary](https://github.com/Saumya-01git/aura-reflection-sanctuary)
 - 🏷️ **Campaign Verification Label:** `dev-tutorial=cloud-run-ai-challenge`
@@ -188,32 +188,40 @@ Deployed Firestore security rules strictly isolating personal user vaults, colla
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // 1. Single-User Private Vault Isolation (Zero Cross-Tenant Leakage)
+    // 1. User Data Isolation (Single-User Vault)
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    
-    // 2. Multi-Member Collaborative Squad Rooms (Strict Limit: 5 Members)
-    match /squad_rooms/{roomId} {
-      allow read, write: if request.auth != null && 
-        (request.auth.uid in resource.data.participantUids || 
-         request.auth.uid in request.resource.data.participantUids) &&
+
+    // 2. Squad / Circle Rooms (Collaborative AI Space up to 5 members)
+    match /duo_rooms/{roomId} {
+      allow read: if request.auth != null && 
+        (resource == null || request.auth.uid in resource.data.participantUids);
+      allow create: if request.auth != null && 
+        request.auth.uid in request.resource.data.participantUids &&
         request.resource.data.participantUids.size() <= 5;
+      allow update: if request.auth != null && 
+        (request.auth.uid in resource.data.participantUids || 
+         (request.auth.uid in request.resource.data.participantUids && request.resource.data.participantUids.size() <= 5));
+      allow delete: if request.auth != null && 
+        resource.data.creatorUid == request.auth.uid;
+
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+      }
     }
-    
-    // 3. Selective Privacy-Preserving Public Snippets (Zero-PII Storage)
+
+    // 3. Selective Privacy Sharing (Isolated Public Quotes / Snippets)
     match /public_snippets/{snippetId} {
       allow read: if true;
       allow create: if request.auth != null && request.resource.data.authorUid == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.authorUid == request.auth.uid;
     }
-    
-    // 4. Role-Based Access Control (RBAC) System Telemetry
-    match /system_telemetry/{docId} {
-      allow read: if request.auth != null && 
-        (request.auth.token.role == 'admin' || 
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+
+    // 4. System Telemetry (Admin Telemetry & Aggregates - strictly no user text)
+    match /system/telemetry {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
   }
 }
