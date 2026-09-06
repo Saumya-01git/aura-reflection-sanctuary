@@ -17,7 +17,6 @@ Developed for the **Google Cloud Gen AI Academy APAC Edition (Cohort 3) Ideathon
 
 ## 📹 Video Walkthrough & Live Submission Links
 
-- 🎥 **App Walkthrough & Demonstration Video:** [Watch Demo Video Walkthrough](#) *(Replace with your YouTube/Drive/LinkedIn Link)*
 - 💻 **Public GitHub Codebase:** [https://github.com/Saumya-01git/aura-reflection-sanctuary](https://github.com/Saumya-01git/aura-reflection-sanctuary)
 - 🏷️ **Campaign Verification Label:** `dev-tutorial=cloud-run-ai-challenge`
 - 🏷️ **Hackathon Cohort:** Google Cloud Gen AI Academy APAC Edition — Cohort 3
